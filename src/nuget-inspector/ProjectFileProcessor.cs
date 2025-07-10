@@ -42,6 +42,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
             var rpid = reference.PackageIdentity;
             var dep = new Dependency(
                 name: rpid.Id,
+                type: ComponentType.NuGet,
                 version_range: reference.AllowedVersions ?? new VersionRange(rpid.Version),
                 framework: ProjectFramework,
                 is_direct: true);
@@ -76,7 +77,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
         }
 
         var deduped = new List<PackageReference>();
-        foreach(var dupes in by_name.Values)
+        foreach (var dupes in by_name.Values)
         {
             if (Config.TRACE)
             {
@@ -152,7 +153,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
             bool is_implicit = false;
             foreach (var meta in reference.Metadata)
             {
-                if  (meta.Name == "IsImplicitlyDefined" && meta.EvaluatedValue=="true")
+                if (meta.Name == "IsImplicitlyDefined" && meta.EvaluatedValue == "true")
                     is_implicit = true;
             }
             if (is_implicit)
@@ -288,7 +289,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
                         vers = version_range.MinVersion;
                 }
 
-                PackageReference plainref = new (
+                PackageReference plainref = new(
                     identity: new PackageIdentity(id: artifact, version: vers),
                     targetFramework: ProjectFramework,
                     userInstalled: false,
@@ -344,7 +345,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
         List<PackageIdentity> direct_dependency_pids = references.ConvertAll(r => r.PackageIdentity);
 
         // Use the gather approach to gather all possible deps
-        ISet<SourcePackageDependencyInfo> available_dependencies  = nugetApi.GatherPotentialDependencies(
+        ISet<SourcePackageDependencyInfo> available_dependencies = nugetApi.GatherPotentialDependencies(
             direct_dependencies: direct_dependency_pids,
             framework: ProjectFramework!
         );
@@ -408,6 +409,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
             }
             BasePackage dep = new(
                 name: resolved_dep.Id,
+                type: ComponentType.NuGet,
                 version: resolved_dep.Version.ToString(),
                 framework: ProjectFramework!.GetShortFolderName());
 
@@ -456,6 +458,7 @@ internal class ProjectFileProcessor : IDependencyProcessor
             }
             BasePackage dep = new(
                 name: resolved_dep.Id,
+                type: ComponentType.NuGet,
                 version: resolved_dep.Version.ToString(),
                 framework: ProjectFramework!.GetShortFolderName());
 
@@ -550,7 +553,9 @@ internal class ProjectXmlFileProcessor : ProjectFileProcessor
                 packref = new PackageReference(
                     identity: identity,
                     targetFramework: ProjectFramework);
-            } else {
+            }
+            else
+            {
                 packref = new PackageReference(
                     identity: identity,
                     targetFramework: ProjectFramework,
