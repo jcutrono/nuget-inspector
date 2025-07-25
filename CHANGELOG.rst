@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v0.9.13
+--------
+
+This release includes:
+
+* Bug fixes
+
 v0.9.12
 --------
 

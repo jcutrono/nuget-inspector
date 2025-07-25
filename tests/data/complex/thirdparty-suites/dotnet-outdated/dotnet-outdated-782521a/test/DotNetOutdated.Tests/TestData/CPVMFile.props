@@ -1,5 +1,0 @@
-<Project>
-	<ItemGroup>
-		<PackageVersion Include="FakePackage" Version="1.0.0" />
-	</ItemGroup>
-</Project>
